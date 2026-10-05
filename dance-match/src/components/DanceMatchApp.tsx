@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { getQuestions } from "@/lib/questions";
 import type { Answers, Mode, ResultProfile } from "@/lib/types";
+import { saveAnonymousSubmission } from "@/lib/supabase";
 import {
   calculateResult,
   cautions,
@@ -64,12 +65,14 @@ export default function DanceMatchApp() {
   const [result, setResult] = useState<ResultProfile | null>(null);
   const [saved, setSaved] = useState<SavedResults>({});
   const [message, setMessage] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   const questions = useMemo(() => getQuestions(mode), [mode]);
   const q = questions[index];
 
   const start = (m: Mode) => {
-    setMode(m); setIndex(0); setAnswers({}); setResult(null); setMessage(""); setScreen("quiz");
+    setMode(m); setIndex(0); setAnswers({}); setResult(null); setMessage(""); setConsent(false); setSaveState("idle"); setScreen("quiz");
   };
 
   const answer = (value: number | string) => {
@@ -91,6 +94,17 @@ export default function DanceMatchApp() {
   };
 
   const modeName = mode === "student" ? "生徒用" : mode === "parent" ? "保護者用" : "小学生低学年用";
+
+  const saveResearchData = async () => {
+    if (!result || !consent || saveState === "saving" || saveState === "saved") return;
+    setSaveState("saving");
+    try {
+      await saveAnonymousSubmission({ profile: result, questions, answers });
+      setSaveState("saved");
+    } catch {
+      setSaveState("error");
+    }
+  };
 
   if (screen === "home") return (
     <main className="page">
@@ -171,6 +185,25 @@ export default function DanceMatchApp() {
     <section className="card"><h2>体験レッスンで確認</h2><div className="check-list">{["一番習いたい内容を実際に扱っているか","先生が目的を聞いてくれるか","質問や『分からない』を言えるか","痛みや不安を伝えられるか","必要な修正を具体的に説明してくれるか","レッスン終了後にまた受けたいと思えるか"].map(x=><div key={x}>□ {x}</div>)}</div></section>
 
     {result.pressure > 0 && <section className="card"><h2>周囲からの影響</h2><p>{result.pressure >= (isChild ? 2.5 : 4) ? "周囲からの期待や義務感が比較的強く表れています。良い悪いと判断せず、本人自身がどうしたいかを別に確認します。" : "周囲からの影響は補助情報として扱い、マッチング得点には直接加えません。"}</p></section>}
+
+    <section className="card">
+      <h2>匿名データ提供（任意）</h2>
+      <p className="muted">Dance Matchの質問や推薦ロジックを改善するため、選択式の回答と計算結果だけを匿名で保存できます。氏名・学校名・メールアドレス・最後の自由記述は保存しません。保存しなくても診断は利用できます。</p>
+      <label className="consent">
+        <input
+          type="checkbox"
+          checked={consent}
+          disabled={saveState === "saved"}
+          onChange={(event) => { setConsent(event.target.checked); if (saveState === "error") setSaveState("idle"); }}
+        />
+        <span>{isChild ? "保護者として、匿名データを研究・サービス改善に利用することに同意します" : "匿名データを研究・サービス改善に利用することに同意します"}</span>
+      </label>
+      <button className="primary" disabled={!consent || saveState === "saving" || saveState === "saved"} onClick={saveResearchData}>
+        {saveState === "saving" ? "保存中…" : saveState === "saved" ? "保存しました" : "匿名データを提供する"}
+      </button>
+      {saveState === "saved" && <p className="save-success">ご協力ありがとうございます。匿名データを保存しました。</p>}
+      {saveState === "error" && <p className="save-error">保存できませんでした。診断結果には影響ありません。時間をおいてもう一度お試しください。</p>}
+    </section>
 
     <section className="card disclaimer"><p>この結果は医療・心理診断ではありません。現在は研究知見をもとに設計したβ版であり、統計的な妥当性検証を継続して行う前提です。最終的な教室選びでは、安全性・実際の指導内容・通いやすさ・本人の体験を優先してください。</p></section>
     {saved.student && saved.parent && <button className="primary wide" onClick={()=>setScreen("compare")}>生徒と保護者の結果を比較する</button>}
