@@ -7,3 +7,8 @@
 button:disabled{opacity:.5;cursor:not-allowed}
 .save-success{color:#2f6a45;font-weight:700;font-size:.9rem}
 .save-error{color:#9a3d20;font-weight:700;font-size:.9rem}
+
+.footer-links{text-align:center;font-size:.85rem}
+.footer-links a,.muted a,.prose a{color:inherit;text-underline-offset:3px}
+.prose h1{font-size:clamp(1.8rem,5vw,2.6rem);margin:1rem 0}
+.prose h2{font-size:1.15rem;margin:1.8rem 0 .6rem}
