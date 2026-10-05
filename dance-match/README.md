@@ -36,3 +36,8 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
 
 DB定義は `supabase/migrations/001_create_anonymous_diagnosis_submissions.sql` にあります。
 公開クライアントには publishable key のみを使用し、service_role / secret key は使用しません。
+
+
+## Deployment
+
+Production is deployed from the `dance-body-business` branch to Vercel with `dance-match` as the project root.
