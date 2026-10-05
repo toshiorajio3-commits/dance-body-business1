@@ -125,6 +125,7 @@ export default function DanceMatchApp() {
         <div><b>親子の希望差</b><span>本人と保護者は平均せず、別々に比較</span></div>
       </div></section>
       <button className="secondary wide" onClick={() => setScreen("about")}>この診断について詳しく見る</button>
+      <div className="footer-links"><a href="/privacy">プライバシーポリシー</a></div>
       {saved.student && saved.parent && <button className="primary wide" onClick={() => setScreen("compare")}>生徒と保護者の結果を比較する</button>}
     </main>
   );
@@ -188,7 +189,7 @@ export default function DanceMatchApp() {
 
     <section className="card">
       <h2>匿名データ提供（任意）</h2>
-      <p className="muted">Dance Matchの質問や推薦ロジックを改善するため、選択式の回答と計算結果だけを匿名で保存できます。氏名・学校名・メールアドレス・最後の自由記述は保存しません。保存しなくても診断は利用できます。</p>
+      <p className="muted">Dance Matchの質問や推薦ロジックを改善するため、選択式の回答と計算結果だけを匿名で保存できます。氏名・学校名・メールアドレス・最後の自由記述は保存しません。保存しなくても診断は利用できます。 <a href="/privacy">データの取扱いを見る</a></p>
       <label className="consent">
         <input
           type="checkbox"
