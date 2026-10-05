@@ -21,3 +21,18 @@ npm run dev
 
 ## 注意
 研究知見をもとに設計したβ版です。医療・心理診断ではなく、現段階で統計的妥当性が確立した尺度とは表示しません。
+
+
+## Supabase
+
+公開β版は、利用者が明示的に同意した場合のみ、選択式回答と集計結果を匿名保存します。自由記述は保存しません。
+
+必要な環境変数:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+```
+
+DB定義は `supabase/migrations/001_create_anonymous_diagnosis_submissions.sql` にあります。
+公開クライアントには publishable key のみを使用し、service_role / secret key は使用しません。
