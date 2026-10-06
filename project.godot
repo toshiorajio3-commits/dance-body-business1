@@ -1,0 +1,13 @@
+; Godot 4 project file created for a code-only demo.
+config_version=5
+
+[application]
+config/name="Rhythm Battle Demo"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.0")
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
